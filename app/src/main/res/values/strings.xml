@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ComposeMapDemo</string>
+    <string name="wait_dep">waiting for development!</string>
 </resources>

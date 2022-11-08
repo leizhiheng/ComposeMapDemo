@@ -4,11 +4,16 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,6 +21,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.min
+import com.ubt.composemapdemo.ui.navigation.Navigator
 import com.ubt.composemapdemo.ui.theme.ComposeMapDemoTheme
 
 class MainActivity : ComponentActivity() {
@@ -28,12 +34,26 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android!!!")
+                    Navigator()
                 }
             }
         }
     }
 }
+
+@Composable
+fun CircleImageView() {
+    Image(
+        painter = painterResource(R.drawable.ic_back_left),
+        contentDescription = "Circle Image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .size(128.dp)
+            .clip(CircleShape) // clip to the circle shape
+            .border(5.dp, Color.Gray, CircleShape)//optional
+    )
+}
+
 
 
 fun Modifier.firstBaseLineToTop(firstBaselineToTop: Dp) = layout { measurable, constraints ->
