@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -20,11 +21,13 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.ubt.composemapdemo.R
 import com.ubt.composemapdemo.showToast
+import com.ubt.composemapdemo.ui.commomcomposable.widget.ThreeOperationChoice
 import com.ubt.composemapdemo.ui.navigation.Router
 import com.ubt.composemapdemo.ui.theme.ComposeMapDemoTheme
 
@@ -64,7 +67,7 @@ fun AutoCleanScreen() {
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Canvas(modifier = Modifier.size(15.dp)) {
+                        Canvas(modifier = Modifier.size(12.dp)) {
                             val width = size.width
                             drawCircle(Color.Green, width / 2f)
                         }
@@ -125,16 +128,19 @@ fun AutoCleanScreen() {
                     }
 
                     Spacer(modifier = Modifier.height(15.dp))
+
                     //操作按钮
-                    OperationChoice(
+                    ThreeOperationChoice(
                         Modifier
                             .fillMaxWidth()
                             .height(120.dp),
                         iconIdLeft = R.drawable.ic_mode_switch,
                         iconIdMid = R.drawable.ic_start,
-                        iconIdRight = R.drawable.ic_base_sation,
+                        iconIdRight = R.drawable.ic_mode_switch,
                         strLeft = "模式切换",
-                        strRight = "返回基站"
+                        strRight = "返回基站",
+                        onLeftClick = { showToast("模式切换") },
+                        onRightClick = { showToast("返回基站") }
                     )
                 }
             }
@@ -219,92 +225,6 @@ fun SingleIconCard(modifier: Modifier, iconId: Int, str: String) {
                 linkTo(start = parent.start, end = parent.end)
                 bottom.linkTo(parent.bottom, 10.dp)
             })
-    }
-}
-
-@Composable
-fun OperationChoice(
-    modifier: Modifier,
-    iconIdLeft: Int,
-    iconIdMid: Int,
-    iconIdRight: Int,
-    strLeft: String,
-    strRight: String
-) {
-    ConstraintLayout(
-        modifier = modifier
-    ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            drawRoundRect(
-                color = Color.White,
-                cornerRadius = CornerRadius(5.dp.toPx(), 5.dp.toPx())
-            )
-        }
-        val (ivMode, tvMode, ivWork, ivBackStation, tvBackStation) = createRefs()
-        Image(
-            painter = painterResource(id = iconIdMid),
-            contentDescription = "",
-            modifier = Modifier
-                .size(75.dp)
-                .clickable(
-                    onClick = { showToast("开始") },
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() })
-                .constrainAs(ivWork) {
-                    linkTo(
-                        start = parent.start,
-                        top = parent.top,
-                        end = parent.end,
-                        bottom = parent.bottom
-                    )
-                })
-
-        Image(
-            painter = painterResource(id = iconIdLeft),
-            contentDescription = "",
-            modifier = Modifier
-                .clickable(
-                    onClick = { showToast(strLeft) },
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() })
-                .size(55.dp)
-                .constrainAs(ivMode) {
-                    top.linkTo(ivWork.top)
-                    start.linkTo(parent.start, 20.dp)
-                })
-
-        Image(
-            painter = painterResource(id = iconIdRight),
-            contentDescription = "",
-            modifier = Modifier
-                .clickable(
-                    onClick = { showToast(strRight) },
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() })
-
-                .size(55.dp)
-                .constrainAs(ivBackStation) {
-                    top.linkTo(ivWork.top)
-                    end.linkTo(parent.end, 20.dp)
-                })
-
-        Text(
-            text = strLeft,
-            fontSize = 12.sp,
-            modifier = Modifier
-                .constrainAs(tvMode) {
-                    top.linkTo(ivMode.bottom, 5.dp)
-                    linkTo(start = ivMode.start, end = ivMode.end)
-                })
-
-        Text(
-            text = strRight,
-            fontSize = 12.sp,
-            modifier = Modifier
-                .constrainAs(tvBackStation) {
-                    top.linkTo(ivBackStation.bottom, 5.dp)
-                    linkTo(start = ivBackStation.start, end = ivBackStation.end)
-                })
     }
 }
 

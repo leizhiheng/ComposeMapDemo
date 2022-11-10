@@ -11,6 +11,7 @@ import com.ubt.composemapdemo.ui.device.DeviceViewModel
 import com.ubt.composemapdemo.ui.device.MapVirtualWallScreen
 import com.ubt.composemapdemo.ui.device.AutoCleanScreen
 import com.ubt.composemapdemo.ui.map.MapDisplayScreen
+import com.ubt.composemapdemo.ui.map.MapViewModel
 
 private object NavigationDestinations{
     const val ROUTE_AUTO_CLEAN = "auto_clean"
@@ -26,10 +27,11 @@ fun Navigator(deviceViewModel: DeviceViewModel = viewModel()) {
             AutoCleanScreen()
         }
         composable(NavigationDestinations.ROUTE_MAP_DISPLAY) {
-            MapDisplayScreen()
+            MapDisplayScreen(viewModel(modelClass = MapViewModel::class.java))
         }
         composable(NavigationDestinations.ROUTE_MAP_VIRTUAL_WALL) {
-            MapVirtualWallScreen()
+            var mapViewModel: MapViewModel = viewModel()
+            MapVirtualWallScreen(mapViewModel)
         }
     }
 
