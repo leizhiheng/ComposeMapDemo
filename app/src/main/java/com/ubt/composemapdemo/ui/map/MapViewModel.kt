@@ -37,7 +37,7 @@ class MapViewModel(app: Application): AndroidViewModel(app) {
     private var _canvasEnable: MutableLiveData<Boolean> = MutableLiveData(false)
     var canvasEnable = _canvasEnable
 
-    private var _isUpdateDialogOpen: MutableLiveData<Boolean> = MutableLiveData(false)
+    private var _isUpdateDialogOpen: MutableState<Boolean> = mutableStateOf(false)
     var isUpdateDialogOpen = _isUpdateDialogOpen
 
     fun getWalls() {

@@ -139,7 +139,7 @@ private fun MapVirtualWallContent(viewModel: MapViewModel, walls:MutableList<Vir
             )
         }
 
-        DialogBoxLoading(dialogState = viewModel.isUpdateDialogOpen.value?: false)
+        DialogBoxLoading(dialogState = viewModel.isUpdateDialogOpen.value)
     }
 }
 
