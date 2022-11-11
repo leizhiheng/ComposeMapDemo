@@ -1,6 +1,8 @@
 package com.ubt.composemapdemo.ui.device
 
+import android.app.Activity
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import androidx.activity.OnBackPressedCallback
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -40,9 +43,11 @@ fun AutoCleanScreen() {
                     .background(color = Color(0xFFEFEFF0))
                     .fillMaxSize()
             ) {
+                //通过CompositionLocal获取当前Activity
+                val activity = (LocalContext.current as? Activity)
                 //title bar
                 val onBack: () -> Unit = {
-                    Router.popBack()
+                    activity?.finish()
                 }
                 EasyBar(onBack, "自动清洁") {
                     Router.toMapDisplayScreen()
@@ -54,8 +59,7 @@ fun AutoCleanScreen() {
                         .padding(start = 15.dp, end = 15.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
-
+                    
                     DeviceState(
                         modifier = Modifier
                             .wrapContentHeight()
