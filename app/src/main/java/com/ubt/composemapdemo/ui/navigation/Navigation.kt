@@ -27,11 +27,10 @@ fun Navigator(deviceViewModel: DeviceViewModel = viewModel()) {
             AutoCleanScreen()
         }
         composable(NavigationDestinations.ROUTE_MAP_DISPLAY) {
-            MapDisplayScreen(viewModel(modelClass = MapViewModel::class.java))
+            MapDisplayScreen()
         }
         composable(NavigationDestinations.ROUTE_MAP_VIRTUAL_WALL) {
-            var mapViewModel: MapViewModel = viewModel()
-            MapVirtualWallScreen(mapViewModel)
+            MapVirtualWallScreen()
         }
     }
 

@@ -1,5 +1,6 @@
 package com.ubt.composemapdemo.ui.map
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.graphics.PointF
 import androidx.compose.runtime.LaunchedEffect
@@ -7,163 +8,56 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.room.Entity
 import com.ubt.composemapdemo.dp2Px
+import com.ubtrobot.mapview.VirtualWall
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class MapViewModel(app: Application): AndroidViewModel(app) {
+
+    private val viewModelJob = SupervisorJob()
+    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private val repository = MapViewRepository()
 
-    private var _virtualWalls = repository.getVirtualWall().toMutableStateList()
+    private var _virtualWalls: MutableLiveData<MutableList<VirtualWall>> = MutableLiveData(mutableListOf())
     var virtualWalls = _virtualWalls
 
-    private var _tempVirtualWalls = mutableListOf<VirtualWall>().toMutableStateList()
-    var tempVirtualWalls = _tempVirtualWalls
+    var tempVirtualWalls = Transformations.switchMap(_virtualWalls) {
+        MutableLiveData<MutableList<VirtualWall>>(mutableListOf()).apply {
+            this.value!!.addAll(it)
+        }
+    }
 
-    private var _canvasEnable: MutableState<Boolean> = mutableStateOf(false)
+    private var _canvasEnable: MutableLiveData<Boolean> = MutableLiveData(false)
     var canvasEnable = _canvasEnable
 
-    private var _isUpdateDialogOpen: MutableState<Boolean> = mutableStateOf(false)
+    private var _isUpdateDialogOpen: MutableLiveData<Boolean> = MutableLiveData(false)
     var isUpdateDialogOpen = _isUpdateDialogOpen
 
-    fun updateWalls() {
-
-    }
-}
-
-data class VirtualWall(var left: Float, var top: Float, var right: Float, var bottom: Float, var state: VirtualWallState = VirtualWallState.Idle) {
-    companion object {
-        var MIN_WIDTH = dp2Px(50)
-
-        fun getOriginalVirtualWall(): VirtualWall {
-            return VirtualWall(dp2Px(130f), dp2Px(300f), dp2Px(230f), dp2Px(400f), VirtualWallState.Editing)
+    fun getWalls() {
+        uiScope.launch(Dispatchers.IO) {
+            _virtualWalls.value!!.clear()
+            _virtualWalls.value!!.addAll(repository.getVirtualWall())
         }
     }
 
-    fun getWidth(): Float {
-        return right - left
-    }
-
-    fun getHeight(): Float {
-        return bottom - top;
-    }
-
-    fun updateDraggingRect(disX: Float, disY: Float) {
-        when (draggingPointIndex) {
-            0 -> {
-                left += disX
-                top += disY
-
-                if (!checkMinWidth()) {
-                    left = right - MIN_WIDTH
-                }
-
-                if (!checkMinHeight()) {
-                    top = bottom - MIN_WIDTH
-                }
-            }
-            1 -> {
-                right += disX
-                top += disY
-
-                if (!checkMinWidth()) {
-                    right = left + MIN_WIDTH
-                }
-
-                if (!checkMinHeight()) {
-                    top = bottom - MIN_WIDTH
-                }
-            }
-            2 -> {
-                left += disX
-                bottom += disY
-
-                if (!checkMinWidth()) {
-                    left = right - MIN_WIDTH
-                }
-
-                if (!checkMinHeight()) {
-                    bottom = top + MIN_WIDTH
-                }
-            }
-            3 -> {
-                right += disX
-                bottom += disY
-
-                if (!checkMinWidth()) {
-                    right = left + MIN_WIDTH
-                }
-
-                if (!checkMinHeight()) {
-                    bottom = top + MIN_WIDTH
-                }
-            }
+    fun insetWalls(walls: List<VirtualWall>) {
+        uiScope.launch(Dispatchers.IO) {
+            repository.insertVirtualWall(walls)
         }
     }
 
-    fun checkMinWidth(): Boolean {
-        return right - left > MIN_WIDTH
+    fun deleteWall(wall: VirtualWall) {
+        uiScope.launch(Dispatchers.IO) {
+            repository.deleteWall(wall)
+        }
     }
-
-    fun checkMinHeight(): Boolean {
-        return bottom - top > MIN_WIDTH
-    }
-
-    fun reset() {
-        draggingPoint = null
-        draggingPointIndex = -1
-    }
-
-    var draggingPoint: PointF? = null
-    var draggingPointIndex = -1
-
-    var points: MutableList<PointF> = mutableListOf()
-        get() {
-            field.clear()
-            field.add(leftTop)
-            field.add(rightTop)
-            field.add(leftBottom)
-            field.add(rightBottom)
-            return field
-        }
-
-    var leftTop: PointF = PointF(0f, 0f)
-        get() {
-            return PointF(left, top)
-        }
-        set(p) {
-            left = p.x
-            top = p.y
-            field = p
-        }
-
-    var rightTop: PointF = PointF(0f, 0f)
-        get() {
-            return PointF(right, top)
-        }
-        set(p) {
-            right = p.x
-            top = p.y
-            field = p
-        }
-
-    var leftBottom: PointF = PointF(0f, 0f)
-        get() {
-            return PointF(left, bottom)
-        }
-        set(p) {
-            left = p.x
-            bottom = p.y
-            field = p
-        }
-
-    var rightBottom: PointF = PointF(0f, 0f)
-        get() {
-            return PointF(right, bottom)
-        }
-        set(p) {
-            right = p.x
-            bottom = p.y
-            field = p
-        }
 }
 
 sealed class VirtualWallState {

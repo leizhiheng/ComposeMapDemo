@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -26,25 +27,30 @@ import com.ubt.composemapdemo.ui.commomcomposable.dialog.DialogBoxLoading
 import com.ubt.composemapdemo.ui.commomcomposable.widget.ThreeOperationChoice
 import com.ubt.composemapdemo.ui.map.*
 import com.ubt.composemapdemo.ui.theme.ComposeMapDemoTheme
+import com.ubtrobot.mapview.VirtualWall
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
 @Composable
-fun MapVirtualWallScreen(viewModel: MapViewModel) {
+fun MapVirtualWallScreen() {
+
+    var viewModel: MapViewModel = viewModel()
+    viewModel.getWalls()
+    viewModel.virtualWalls.observeAsState().value?.let {
+        MapVirtualWallContent(viewModel, walls = it)
+    }
+
+
+}
+
+@Composable
+private fun MapVirtualWallContent(viewModel: MapViewModel, walls:MutableList<VirtualWall>) {
     ComposeMapDemoTheme {
-        //虚拟墙可编辑
-        viewModel.canvasEnable.value = true
-
-        viewModel.tempVirtualWalls.apply {
-            clear()
-            addAll(viewModel.virtualWalls)
-        }
-
         var isEditing by remember { mutableStateOf(false) }
 
-        if (viewModel.isUpdateDialogOpen.value) {
+        if (viewModel.isUpdateDialogOpen.value!!) {
             LaunchedEffect(key1 = viewModel.isUpdateDialogOpen) {
                 delay(1000)
                 viewModel.isUpdateDialogOpen.value = false
@@ -76,11 +82,11 @@ fun MapVirtualWallScreen(viewModel: MapViewModel) {
 
             //虚拟墙图层
             val callback: (Int) -> Unit = { i: Int ->
-                viewModel.tempVirtualWalls[i].state = VirtualWallState.Editing
+                walls[i].state = VirtualWallState.Editing
                 isEditing = true
             }
-            VirtualWallCanvas(walls = viewModel.tempVirtualWalls, viewModel.canvasEnable, selectCallback = callback)
 
+            VirtualWallCanvas(walls = walls, true, selectCallback = callback)
 
             //返回按钮
             BackButton(modifier = Modifier.constrainAs(button) {
@@ -99,34 +105,32 @@ fun MapVirtualWallScreen(viewModel: MapViewModel) {
                         bottom.linkTo(parent.bottom, 20.dp)
                     },
                 iconIdLeft = R.drawable.ic_edit_confirm,
-                iconIdMid = R.drawable.ic_start,
+                iconIdMid = R.drawable.ic_add,
                 iconIdRight = R.drawable.ic_edit_cancel,
                 strLeft = "确认",
                 strRight = "删除",
                 onLeftClick = {
                     viewModel.isUpdateDialogOpen.value = true
                     isEditing = false
-//                    backEnabled = false
-                    viewModel.tempVirtualWalls.filter { it.state == VirtualWallState.Editing }
-                        .forEach {
-                            it.state = VirtualWallState.Idle
-                        }
-                    viewModel.virtualWalls.apply {
-                        clear()
-                        addAll(viewModel.tempVirtualWalls)
+                    walls.filter {
+                        it.state == VirtualWallState.Editing
+                    }.forEach {
+                        it.state = VirtualWallState.Idle
                     }
+
+                    viewModel.insetWalls(walls)
                 },
                 onMidClick = {
                     isEditing = true
 //                    backEnabled = true
-                    viewModel.tempVirtualWalls.add(VirtualWall.getOriginalVirtualWall())
+                    walls.add(VirtualWall.getOriginalVirtualWall())
                 },
                 onRightClick = {
                     isEditing = false
-//                    backEnabled = false
-                    viewModel.tempVirtualWalls.filter { it.state == VirtualWallState.Editing }
+                    walls.filter { it.state == VirtualWallState.Editing }
                         .forEach {
-                            viewModel.tempVirtualWalls.remove(it)
+                            walls.remove(it)
+                            viewModel.deleteWall(it)
                         }
                 },
                 midEnable = !isEditing,
@@ -135,14 +139,14 @@ fun MapVirtualWallScreen(viewModel: MapViewModel) {
             )
         }
 
-        DialogBoxLoading(dialogState = viewModel.isUpdateDialogOpen)
+        DialogBoxLoading(dialogState = viewModel.isUpdateDialogOpen.value?: false)
     }
 }
 
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun VirtualWallCanvas(walls: List<VirtualWall>, enable: MutableState<Boolean>, selectCallback: ((Int) -> Unit)? = null) {
+fun VirtualWallCanvas(walls: MutableList<VirtualWall>, enable: Boolean, selectCallback: ((Int) -> Unit)? = null) {
     Box(modifier = Modifier.fillMaxSize()) {
         var editingWallIndex by remember { mutableStateOf(0) }
         var editingWall: VirtualWall? = null
@@ -159,7 +163,7 @@ fun VirtualWallCanvas(walls: List<VirtualWall>, enable: MutableState<Boolean>, s
         Canvas(modifier = Modifier
             .fillMaxSize()
             .pointerInteropFilter { event ->
-                if (!enable.value) return@pointerInteropFilter false
+                if (!enable) return@pointerInteropFilter false
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         downTime = System.currentTimeMillis()
@@ -232,6 +236,7 @@ fun findTargetWall(walls: List<VirtualWall>, event: MotionEvent, findEditingWall
             }
         }
     } else {
+        if (walls.filter { it.state == VirtualWallState.Editing }.isNotEmpty()) return -1
         for (i in walls.size - 1 downTo 0) {
             val wall = walls[i]
             if (wall.left < event.x && wall.right > event.x && wall.top < event.y && wall.bottom > event.y) {
@@ -294,8 +299,7 @@ fun PreviewMapVirtualWallScreen() {
                 .fillMaxSize()
                 .background(color = Color.LightGray)
         ) {
-            val viewModel: MapViewModel = viewModel()
-            MapVirtualWallScreen(viewModel)
+            MapVirtualWallScreen()
         }
     }
 }

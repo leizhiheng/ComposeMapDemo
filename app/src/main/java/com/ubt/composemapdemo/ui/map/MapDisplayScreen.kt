@@ -5,10 +5,13 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -28,10 +31,20 @@ import com.ubt.composemapdemo.dp2Px
 import com.ubt.composemapdemo.ui.device.VirtualWallCanvas
 import com.ubt.composemapdemo.ui.navigation.Router
 import com.ubt.composemapdemo.ui.theme.ComposeMapDemoTheme
+import com.ubtrobot.mapview.VirtualWall
 import kotlin.math.roundToInt
 
 @Composable
-fun MapDisplayScreen(viewModel: MapViewModel) {
+fun MapDisplayScreen() {
+    var viewModel: MapViewModel = viewModel()
+    viewModel.getWalls()
+    viewModel.virtualWalls.observeAsState().value?.let {
+        MapDisplayContent(walls = it)
+    }
+}
+
+@Composable
+private fun MapDisplayContent(walls: MutableList<VirtualWall>) {
     ComposeMapDemoTheme {
         ConstraintLayout(
             modifier = Modifier
@@ -53,14 +66,14 @@ fun MapDisplayScreen(viewModel: MapViewModel) {
                         parent.top
                     )
                 })
-            
-            VirtualWallCanvas(walls = viewModel.virtualWalls, viewModel.canvasEnable)
+
+            VirtualWallCanvas(walls = walls, false)
 
             BackButton(modifier = Modifier.constrainAs(button) {
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)
             })
-            
+
             MapOperateItems(modifier = Modifier
                 .wrapContentHeight()
                 .fillMaxWidth()
@@ -85,7 +98,10 @@ fun MapOperateItems(modifier: Modifier, onVirtualClick: () -> Unit) {
                 contentDescription = "",
                 modifier = Modifier
                     .size(50.dp)
-                    .clickable { onVirtualClick.invoke() }
+                    .clickable(
+                        indication = null,
+                        interactionSource = MutableInteractionSource()
+                    ) { onVirtualClick.invoke() }
             )
             Spacer(modifier = Modifier.height(5.dp))
             Text(
@@ -175,6 +191,6 @@ fun ScreenGridBg(modifier: Modifier, gridItemWidth: Float) {
 @Composable
 fun PreviewMapDisplayScreen() {
     ComposeMapDemoTheme {
-        MapDisplayScreen(viewModel(modelClass = MapViewModel::class.java))
+        MapDisplayScreen()
     }
 }

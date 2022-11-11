@@ -136,7 +136,7 @@ fun AutoCleanScreen() {
                             .height(120.dp),
                         iconIdLeft = R.drawable.ic_mode_switch,
                         iconIdMid = R.drawable.ic_start,
-                        iconIdRight = R.drawable.ic_mode_switch,
+                        iconIdRight = R.drawable.ic_base_sation,
                         strLeft = "模式切换",
                         strRight = "返回基站",
                         onLeftClick = { showToast("模式切换") },

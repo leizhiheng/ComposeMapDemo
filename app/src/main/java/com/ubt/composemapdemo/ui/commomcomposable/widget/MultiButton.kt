@@ -36,7 +36,7 @@ fun ThreeOperationChoice(
     onRightClick: () -> Unit = {},
     leftEnable: Boolean = true,
     midEnable: Boolean = true,
-    rightEnable: Boolean = false
+    rightEnable: Boolean = true
 ) {
     Surface(
         modifier.fillMaxSize(),
