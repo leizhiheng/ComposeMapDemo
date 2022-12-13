@@ -17,25 +17,37 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
+import com.ubt.composemapdemo.test.MapMatrixComposeScreen
+import com.ubt.composemapdemo.test.MapTest
+import com.ubt.composemapdemo.test.PointerInputTestScreen
+import com.ubt.composemapdemo.ui.account.display.DisplayScreen
+import com.ubt.composemapdemo.ui.account.signup.SignupScreen
 import com.ubt.composemapdemo.ui.navigation.Navigator
 import com.ubt.composemapdemo.ui.theme.ComposeMapDemoTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window,false)
         setContent {
             ComposeMapDemoTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = Color.Gray
-                ) {
-                    Navigator()
-                }
+//                Surface(
+//                    modifier = Modifier.fillMaxSize(),
+//                    color = Color.Gray
+//                ) {
+//                    Navigator()
+//                }
 //                var viewModel: MapViewModel = viewModel()
 //                CanvasTest(viewModel.virtualWalls)
-//                MapTest()
+//                MapMatrixComposeScreen()
 
+                SignupScreen(
+                    onBack = { /*TODO*/ },
+                    onAccountChanged = { string -> },
+                    onPasswordChanged = { string -> },
+                    onNextStep = { /*TODO*/ })
 //                DialogBoxLoading()
             }
         }

@@ -13,11 +13,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.room.Entity
 import com.ubt.composemapdemo.dp2Px
+import com.ubtrobot.mapview.RobotMap
 import com.ubtrobot.mapview.VirtualWall
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class MapViewModel(app: Application): AndroidViewModel(app) {
 
@@ -27,6 +25,9 @@ class MapViewModel(app: Application): AndroidViewModel(app) {
 
     private var _virtualWalls: MutableLiveData<MutableList<VirtualWall>> = MutableLiveData(mutableListOf())
     var virtualWalls = _virtualWalls
+
+    private var _robotMap: MutableLiveData<RobotMap> = MutableLiveData(FakerData.create())
+    var robotMap:LiveData<RobotMap> = _robotMap
 
     var tempVirtualWalls = Transformations.switchMap(_virtualWalls) {
         MutableLiveData<MutableList<VirtualWall>>(mutableListOf()).apply {
@@ -57,6 +58,11 @@ class MapViewModel(app: Application): AndroidViewModel(app) {
         uiScope.launch(Dispatchers.IO) {
             repository.deleteWall(wall)
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        uiScope.cancel()
     }
 }
 

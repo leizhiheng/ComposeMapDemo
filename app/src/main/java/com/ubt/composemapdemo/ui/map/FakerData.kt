@@ -447,7 +447,7 @@ object FakerData {
                 theta = 0f,
                 targets = null
             ),
-            ground = Ground(id = "1", name = null, width = 0f, height = 0f, source = ByteArray(11)),
+            ground = Ground(id = "1", name = null, width = 1f, height = 1f, source = ByteArray(11)),
             description = "地图描述信息",
             barriers = mutableListOf(
                 Barrier(

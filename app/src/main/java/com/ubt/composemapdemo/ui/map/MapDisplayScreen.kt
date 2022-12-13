@@ -67,7 +67,7 @@ private fun MapDisplayContent(walls: MutableList<VirtualWall>) {
                     )
                 })
 
-            VirtualWallCanvas(walls = walls, false)
+            VirtualWallCanvas(walls = walls, enable = false)
 
             BackButton(modifier = Modifier.constrainAs(button) {
                 top.linkTo(parent.top)

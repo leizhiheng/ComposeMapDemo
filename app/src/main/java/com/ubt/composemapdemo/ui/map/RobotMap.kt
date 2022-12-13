@@ -15,6 +15,11 @@ import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
+sealed class DragPosition {
+    object OutRect: DragPosition()
+    object InRect: DragPosition()
+    object InDragCorner: DragPosition()
+}
 
 @Entity( tableName = "virtual_wall")
 data class VirtualWall(@PrimaryKey var id: Long, var left: Float, var top: Float, var right: Float, var bottom: Float, @Ignore var state: VirtualWallState = VirtualWallState.Idle) {
@@ -162,6 +167,10 @@ data class VirtualWall(@PrimaryKey var id: Long, var left: Float, var top: Float
             bottom = p.y
             field = p
         }
+
+    override fun toString(): String {
+        return "left = $left, top = $top, right = $right, bottom = $bottom, state = $state"
+    }
 }
 
 @Suppress("ArrayInDataClass")

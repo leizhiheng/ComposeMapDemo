@@ -16,6 +16,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.RequestDisallowInterceptTouchEvent
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,8 +43,6 @@ fun MapVirtualWallScreen() {
     viewModel.virtualWalls.observeAsState().value?.let {
         MapVirtualWallContent(viewModel, walls = it)
     }
-
-
 }
 
 @Composable
@@ -86,7 +86,7 @@ private fun MapVirtualWallContent(viewModel: MapViewModel, walls:MutableList<Vir
                 isEditing = true
             }
 
-            VirtualWallCanvas(walls = walls, true, selectCallback = callback)
+            VirtualWallCanvas(walls = walls, enable = true, selectCallback = callback)
 
             //返回按钮
             BackButton(modifier = Modifier.constrainAs(button) {
@@ -146,8 +146,8 @@ private fun MapVirtualWallContent(viewModel: MapViewModel, walls:MutableList<Vir
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun VirtualWallCanvas(walls: MutableList<VirtualWall>, enable: Boolean, selectCallback: ((Int) -> Unit)? = null) {
-    Box(modifier = Modifier.fillMaxSize()) {
+fun VirtualWallCanvas(modifier: Modifier = Modifier.fillMaxSize(), walls: MutableList<VirtualWall>, enable: Boolean, selectCallback: ((Int) -> Unit)? = null) {
+    Box(modifier = modifier) {
         var editingWallIndex by remember { mutableStateOf(0) }
         var editingWall: VirtualWall? = null
         var downX by remember {
@@ -162,7 +162,7 @@ fun VirtualWallCanvas(walls: MutableList<VirtualWall>, enable: Boolean, selectCa
 
         Canvas(modifier = Modifier
             .fillMaxSize()
-            .pointerInteropFilter { event ->
+            .pointerInteropFilter() { event ->
                 if (!enable) return@pointerInteropFilter false
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
@@ -175,6 +175,7 @@ fun VirtualWallCanvas(walls: MutableList<VirtualWall>, enable: Boolean, selectCa
                         } else {
                             null
                         }
+                        if (editingWall == null) return@pointerInteropFilter false
                     }
                     MotionEvent.ACTION_MOVE -> {
                         val disX = event.x - downX
@@ -207,9 +208,11 @@ fun VirtualWallCanvas(walls: MutableList<VirtualWall>, enable: Boolean, selectCa
                         editingWallIndex = -1
                         editingWall?.reset()
                     }
+                    else -> false
                 }
                 true
-            }, onDraw = {
+            }
+            , onDraw = {
             walls.forEach {
                 //在这里使用一下这个state，触发recompose
                 downX
