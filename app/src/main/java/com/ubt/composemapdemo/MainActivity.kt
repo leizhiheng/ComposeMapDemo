@@ -22,6 +22,8 @@ import com.ubt.composemapdemo.test.MapMatrixComposeScreen
 import com.ubt.composemapdemo.test.MapTest
 import com.ubt.composemapdemo.test.PointerInputTestScreen
 import com.ubt.composemapdemo.ui.account.display.DisplayScreen
+import com.ubt.composemapdemo.ui.account.signin.SignInScreen
+import com.ubt.composemapdemo.ui.account.signup.SetPasswordScreen
 import com.ubt.composemapdemo.ui.account.signup.SignupScreen
 import com.ubt.composemapdemo.ui.navigation.Navigator
 import com.ubt.composemapdemo.ui.theme.ComposeMapDemoTheme
@@ -43,11 +45,10 @@ class MainActivity : ComponentActivity() {
 //                CanvasTest(viewModel.virtualWalls)
 //                MapMatrixComposeScreen()
 
-                SignupScreen(
+                SignInScreen(
                     onBack = { /*TODO*/ },
-                    onAccountChanged = { string -> },
-                    onPasswordChanged = { string -> },
-                    onNextStep = { /*TODO*/ })
+                    onSignUpClicked = { /*TODO*/ },
+                    onForgetPasswordClicked = { /*TODO*/ })
 //                DialogBoxLoading()
             }
         }

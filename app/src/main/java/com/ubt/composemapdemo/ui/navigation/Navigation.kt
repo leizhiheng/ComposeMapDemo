@@ -1,12 +1,15 @@
 package com.ubt.composemapdemo.ui.navigation
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.ubt.composemapdemo.ui.account.signup.SignupScreen
 import com.ubt.composemapdemo.ui.device.DeviceViewModel
 import com.ubt.composemapdemo.ui.device.MapVirtualWallScreen
 import com.ubt.composemapdemo.ui.device.AutoCleanScreen
@@ -17,6 +20,8 @@ private object NavigationDestinations{
     const val ROUTE_AUTO_CLEAN = "auto_clean"
     const val ROUTE_MAP_DISPLAY = "map_display"
     const val ROUTE_MAP_VIRTUAL_WALL = "map_virtual_wall"
+
+
 }
 
 @Composable

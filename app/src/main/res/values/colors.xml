@@ -9,4 +9,9 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="color_6C93A8">#6C93A8</color>
+    <color name="color_text_disable">#C5C2B9</color>
+    <color name="color_text_gray_bg">#CFCFCF</color>
+    <color name="color_text_disable_black">#4C000000</color>
+    <color name="color_text_field_bg">#E7E7E7</color>
+    <color name="color_sub_title">#262626</color>
 </resources>
