@@ -35,6 +35,7 @@ fun SignInScreen(
     onBack: () -> Unit,
     onSignUpClicked: () -> Unit,
     onForgetPasswordClicked: () -> Unit,
+    onSignInSucceed: () -> Unit,
     viewModel: SignInViewModel = viewModel()
 ) {
     val keyboard = LocalSoftwareKeyboardController.current
@@ -175,5 +176,6 @@ fun DisplayScreenPreview() {
     SignInScreen(
         onBack = { /*TODO*/ },
         onSignUpClicked = { /*TODO*/ },
-        onForgetPasswordClicked = { /*TODO*/ })
+        onForgetPasswordClicked = { /*TODO*/ },
+        onSignInSucceed = { /*TODO*/ })
 }

@@ -29,9 +29,11 @@ import com.ubt.composemapdemo.ui.account.wideSolidButton
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SetPasswordScreen(
+fun SignUpPasswordScreen(
+    accountName: String,
+    captcha: String,
     onBack: () -> Unit,
-    onNextStep: () -> Unit,
+    onSignUpSucceed: () -> Unit,
     viewModel: SignupViewModel = viewModel()
 ) {
     val keyboard = LocalSoftwareKeyboardController.current
@@ -130,10 +132,10 @@ fun SetPasswordScreen(
                 .fillMaxWidth()
                 .padding(16.dp, 0.dp)
                 .constrainAs(tip) {
-                start.linkTo(parent.start)
-                top.linkTo(passwordSecondLayout.bottom, 16.dp)
-                end.linkTo(parent.end)
-            })
+                    start.linkTo(parent.start)
+                    top.linkTo(passwordSecondLayout.bottom, 16.dp)
+                    end.linkTo(parent.end)
+                })
 
         wideSolidButton(
             text = "完成",
@@ -148,7 +150,7 @@ fun SetPasswordScreen(
             enabled = passwordFirst.isNotEmpty() && passwordSecond.isNotEmpty(),
             onClick = {
                 keyboard?.hide()
-                onNextStep.invoke()
+                onSignUpSucceed.invoke()
             }
         )
     }
@@ -157,10 +159,9 @@ fun SetPasswordScreen(
 @Preview(showSystemUi = true)
 @Composable
 fun SetPasswordScreenPreview() {
-    SetPasswordScreen(
-        onBack = {},
-        onNextStep = {})
-//    AccountInput() {
-//
-//    }
+    SignUpPasswordScreen(
+        accountName = "",
+        captcha = "",
+        onBack = { /*TODO*/ },
+        onSignUpSucceed = { /*TODO*/ })
 }

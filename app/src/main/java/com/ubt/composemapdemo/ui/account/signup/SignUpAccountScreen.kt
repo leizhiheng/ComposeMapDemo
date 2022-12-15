@@ -32,9 +32,9 @@ import com.ubt.composemapdemo.ui.account.wideSolidButton
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SignupScreen(
+fun SignUpAccountScreen(
     onBack: () -> Unit,
-    onNextStep: () -> Unit,
+    onNextStep: (accountName: String, captcha: String) -> Unit,
     viewModel: SignupViewModel = viewModel()
 ) {
     val keyboard = LocalSoftwareKeyboardController.current
@@ -137,7 +137,7 @@ fun SignupScreen(
             enabled = account.isNotEmpty() && captcha.isNotEmpty(),
             onClick = {
                 keyboard?.hide()
-                onNextStep.invoke()
+                onNextStep.invoke(account, captcha)
             }
         )
     }
@@ -163,10 +163,7 @@ fun EasyCountdown(count: Long) {
 @Preview(showSystemUi = true)
 @Composable
 fun SignupScreenPreview() {
-    SignupScreen(
-        onBack = {},
-        onNextStep = {})
-//    AccountInput() {
-//
-//    }
+    SignUpAccountScreen(onBack = { /*TODO*/ }, onNextStep = { account, captcha ->
+
+    })
 }

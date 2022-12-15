@@ -18,14 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import com.ubt.composemapdemo.test.MapMatrixComposeScreen
-import com.ubt.composemapdemo.test.MapTest
-import com.ubt.composemapdemo.test.PointerInputTestScreen
-import com.ubt.composemapdemo.ui.account.display.DisplayScreen
+import com.ubt.composemapdemo.ui.account.nav.AccountNavGraph
 import com.ubt.composemapdemo.ui.account.signin.SignInScreen
-import com.ubt.composemapdemo.ui.account.signup.SetPasswordScreen
-import com.ubt.composemapdemo.ui.account.signup.SignupScreen
-import com.ubt.composemapdemo.ui.navigation.Navigator
 import com.ubt.composemapdemo.ui.theme.ComposeMapDemoTheme
 
 class MainActivity : ComponentActivity() {
@@ -45,10 +39,7 @@ class MainActivity : ComponentActivity() {
 //                CanvasTest(viewModel.virtualWalls)
 //                MapMatrixComposeScreen()
 
-                SignInScreen(
-                    onBack = { /*TODO*/ },
-                    onSignUpClicked = { /*TODO*/ },
-                    onForgetPasswordClicked = { /*TODO*/ })
+                AccountNavGraph()
 //                DialogBoxLoading()
             }
         }
